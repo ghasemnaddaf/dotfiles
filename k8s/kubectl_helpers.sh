@@ -27,6 +27,11 @@ alias kdelx='kubectl delete secret'
 alias kgcm='kubectl get configmaps'
 alias kdcm='kubectl describe configmap'
 alias kdelcm='kubectl delete configmap'
+alias kgctx='kubectl config current-context'
+alias kctx='kgctx'
+alias kusectx='kubectl config use-context'
+alias ksetctx='kusectx'
+alias ksctx='ksetctx'
 
 function kclogin() {
   tsh --auth=github --proxy=auth-$1.test.infoblox.com:3080 login $1
