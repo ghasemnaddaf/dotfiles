@@ -63,7 +63,7 @@ export AWS_SECRET_ACCESS_KEY=$(aws configure get aws_secret_access_key)
 export AWS_REGION=$(aws configure get region)
 export AWS_SESSION_TOKEN=$(aws configure get aws_session_token)
 
-alias helm='docker run --rm -v $PWD:/app -e AWS_REGION=${AWS_REGION} -e AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID} -e AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY} -e AWS_SESSION_TOKEN=${AWS_SESSION_TOKEN} infoblox/helm:3.2.4-5b243a2'
+alias helm='docker run --rm -v $PWD:/app -e AWS_REGION=${AWS_REGION} -e AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID} -e AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY} -e AWS_SESSION_TOKEN=${AWS_SESSION_TOKEN} infoblox/helm:3'
 alias hl='helm list'
 alias hls='helm list'
 alias hli='helm lint'
