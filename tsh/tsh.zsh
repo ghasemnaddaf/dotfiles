@@ -16,6 +16,9 @@ alias tpp='tplogin prd-1'
 alias tp0='tpp'
 alias tps='tplogin stg-1'
 alias tpdd='tplogin ddi-dev-use1'
+alias tpd5='tpdd'
 alias tpdq='tplogin ddi-qa-use1'
-
+alias tpd2='tpdq'
+alias tpd2a='tpd2'
+alias tpd4='tplogin ddi-qa-ase1'
 

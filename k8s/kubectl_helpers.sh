@@ -33,21 +33,6 @@ alias kusectx='kubectl config use-context'
 alias ksetctx='kusectx'
 alias ksctx='ksetctx'
 
-function kclogin() {
-  tsh --auth=github --proxy=auth-$1.test.infoblox.com:3080 login $1
-}
-
-alias k2='kclogin env-2'
-alias k4='kclogin env-4'
-alias k5='kclogin env-5'
-
-# for the contacts app, FIXME: they do not work when connected to VPN
-# KC_SERVER=$(kubectl config view --minify | grep server | cut -f 2- -d ":" | tr -d " ")
-# KC_SECRET_NAME=$(kubectl get secrets | grep ^default | cut -f1 -d ' ')
-# KC_TOKEN=$(kubectl describe secret $KC_SECRET_NAME | grep -E '^token' | cut -f2 -d':' | tr -d " ")
-# alias kcc='curl --insecure --header "Authorization: Bearer ${KC_TOKEN_CONTACTS_APP}"'
-# alias kcci='curl --insecure --header "Authorization: Bearer ${KC_TOKEN}" ${KC_SERVER}/api'
-
 # for the saas-app-deployment https://github.com/Infoblox-CTO/saas-app-deployment/tree/master/deployment/ngp-onprem#33--setup-environment-variables
 # export USER=$(git config user.email | sed -e 's/\@.*//')
 export REGISTRY_TAG=infobloxcto
@@ -69,3 +54,4 @@ alias hls='helm list'
 alias hli='helm lint'
 alias hd='helm delete'
 alias hi='helm install'
+
