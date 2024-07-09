@@ -21,4 +21,4 @@ alias tpdq='tplogin ddi-qa-use1'
 alias tpd2='tpdq'
 alias tpd2a='tpd2'
 alias tpd4='tplogin ddi-qa-ase1'
-
+alias tpb4='tplogin box-4'
