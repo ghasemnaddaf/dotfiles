@@ -31,7 +31,7 @@
         "-ldflags=-X google.golang.org/protobuf/reflect/protoregistry.conflictPolicy=warn"
     ],
     "editor.accessibilitySupport": "off",
-    "editor.formatOnSave": true,
+    "editor.formatOnSave": false,
     "editor.find.loop": true,
     "editor.codeActionsOnSave": {
         "source.fixAll": "never",
