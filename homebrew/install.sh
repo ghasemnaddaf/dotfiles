@@ -9,8 +9,6 @@
 if test ! $(which brew)
 then
   echo "Didn't find it! Installing Homebrew for you."
-
-  # Install the correct homebrew for each OS type
   if test "$(uname)" = "Darwin"
   then
     ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/refs/head/install/master/install)"
@@ -18,13 +16,14 @@ then
   then
     ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Linuxbrew/refs/head/install/master/install)"
   fi
-
 fi
 
 echo "Now add brew to PATH!"
 echo "# add brew to path" >> ~/.zprofile
 echo 'eval "$(/opt/homebrew/bin/brew shellenv)"' >> ~/.zprofile
-eval "$(/opt/homebrew/bin/brew shellenv)"
 echo "# end brew path" >. ~/.zprofile
+
+# also add for our session!
+eval "$(/opt/homebrew/bin/brew shellenv)"
 
 exit 0
