@@ -12,8 +12,10 @@ PKG_LIST_CASK_MAC="docker-toolbox google-chrome iterm2 virtualbox"
 PKG_LIST_LINUX="build-essential cmake curl dmidecode docker.io python3 python3-pip virtualbox"
 
 if test "$(uname)" = "Darwin"; then
-  echo "Bootstraping Mac ..."
+  echo "Bootstraping Mac ... Installing homebrew"
   /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+  echo "Now add brew to PATH"
+  eval "$(/opt/homebrew/bin/brew shellenv)"
   brew install ${PKG_LIST_COMMON} ${PKG_LIST_MAC}
   brew install --cask ${PKG_LIST_CASK_MAC}
 
