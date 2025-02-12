@@ -33,6 +33,26 @@ alias kusectx='kubectl config use-context'
 alias ksetctx='kusectx'
 alias ksctx='ksetctx'
 
+# ddiaas aliases
+# endpoint manager
+alias qem='k -n ddiaas-endpoint-manager'
+alias qemgepc='qem get epc'
+alias qepc='qemgepc'
+alias qeml='qem logs'
+alias qemx='qem exec -it'
+# dataplane
+alias qd='k -n ddiaas-dataplane'
+alias qdgds='qd get ds'
+alias qdx='qd exec -it'
+alias qdl='qd logs'
+# apps
+alias qdns='k -n ddiaas-dns-endpoint'
+alias qdnsx='qdns exec -it'
+alias qdnsl='qdns logs'
+alias qdhcp='k -n ddiaas-dhcp-endpoint'
+alias qdhcpx='qdhcp exec -it'
+alias qdhcpl='qdhcp logs'
+
 # for the saas-app-deployment https://github.com/Infoblox-CTO/saas-app-deployment/tree/master/deployment/ngp-onprem#33--setup-environment-variables
 # export USER=$(git config user.email | sed -e 's/\@.*//')
 export REGISTRY_TAG=infobloxcto
@@ -43,10 +63,10 @@ export AWS_IAM_ROLE=ngp.k8.core
 export KUBERNETES_NAMESPACE=g # Namespace that you created in Section 2.1
 
 # helm
-export AWS_ACCESS_KEY_ID=$(aws configure get aws_access_key_id)
-export AWS_SECRET_ACCESS_KEY=$(aws configure get aws_secret_access_key)
-export AWS_REGION=$(aws configure get region)
-export AWS_SESSION_TOKEN=$(aws configure get aws_session_token)
+# export AWS_ACCESS_KEY_ID=$(aws configure get aws_access_key_id)
+# export AWS_SECRET_ACCESS_KEY=$(aws configure get aws_secret_access_key)
+# export AWS_REGION=$(aws configure get region)
+# export AWS_SESSION_TOKEN=$(aws configure get aws_session_token)
 
 alias helm='docker run --rm -v $PWD:/app -e AWS_REGION=${AWS_REGION} -e AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID} -e AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY} -e AWS_SESSION_TOKEN=${AWS_SESSION_TOKEN} infoblox/helm:3'
 alias hl='helm list'
