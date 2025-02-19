@@ -93,5 +93,6 @@ mkdir ~/pyenv
 which python || sudo ln -s /usr/bin/python $(which python3)
 python3 -m venv ~/pyenv
 source ~/pyenv/bin/activate
+pip install --upgrade pip
 pip3 install ${PIP_INSTALL}
 
