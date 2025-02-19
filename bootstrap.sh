@@ -89,9 +89,9 @@ popd
 
 # python
 PIP_INSTALL="yq"
-sudo pip3 install ${PIP_INSTALL}
 mkdir ~/pyenv
-which python || ln -s $(which python3) /usr/bin/python
+which python || sudo ln -s $(which python3) /usr/bin/python
 python -m venv ~/pyenv
-
+source ~/pyenv/bin/activate
+pip3 install ${PIP_INSTALL}
 
