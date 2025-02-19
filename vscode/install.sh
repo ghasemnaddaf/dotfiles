@@ -1,5 +1,7 @@
 #!/bin/bash -x
 
+which code && echo "code is already installed" && exit 0
+
 if test "$(uname)" = "Darwin"; then
     wget https://code.visualstudio.com/sha/download\?build\=stable\&os\=darwin-universal -O vscode.zip
     unzip vscode.zip
