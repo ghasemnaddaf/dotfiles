@@ -11,6 +11,6 @@ cd "$(dirname $0)"/..
 
 WANT_INSTALL="zsh/plugins docker k8s vbox vscode"
 for f in ${WANT_INSTALL}; do
-	echo "configuring dotfiles for $f ..."
-	./$f/install.sh
+    echo "configuring dotfiles for $f ..."
+    ./$f/install.sh
 done
