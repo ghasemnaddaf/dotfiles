@@ -17,8 +17,9 @@ if test "$(uname)" = "Darwin"; then
   echo "Now add brew to PATH"
   eval "$(/opt/homebrew/bin/brew shellenv)"
   brew install ${PKG_LIST_COMMON} ${PKG_LIST_MAC}
-  brew install --cask --force ${PKG_LIST_CASK_MAC}
-
+  for pkg in ${PKG_LIST_CASK_MAC}; do
+    brew install --cask $pkg #|| true
+  done
   # enable sshd
   sudo systemsetup -setremotelogin on
   sudo systemsetup -getremotelogin
