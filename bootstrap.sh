@@ -7,8 +7,8 @@ function git_clone() {
 }
 
 PKG_LIST_COMMON="awscli flake8 git golang packer teleport tree vim wget zsh"
-PKG_LIST_MAC="jq"
-PKG_LIST_CASK_MAC="docker-toolbox google-chrome iterm2 virtualbox"
+PKG_LIST_MAC="jq go gnupg vim"
+PKG_LIST_CASK_MAC="google-chrome iterm2 slack flux sublime-text"
 PKG_LIST_LINUX="build-essential cmake curl dmidecode docker.io python3 python3-pip virtualbox"
 
 if test "$(uname)" = "Darwin"; then
@@ -90,5 +90,8 @@ popd
 # python
 PIP_INSTALL="yq"
 sudo pip3 install ${PIP_INSTALL}
+mkdir ~/pyenv
+which python || ln -s $(which python3) /usr/bin/python
+python -m venv ~/pyenv
 
 
