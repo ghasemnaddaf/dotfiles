@@ -17,6 +17,7 @@ resym() {
     if [[ "${d_app}"=""]]; then
       app="${d_target}/app"
       echo "appended target dir to app since $1 was not an absolute path: $app"
+    fi
   fi
   else
     if [[ -L $w ]]; then
