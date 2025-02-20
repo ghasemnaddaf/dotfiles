@@ -31,3 +31,10 @@
 [pull]
         rebase = true
 
+[credential]
+	helper = osxkeychain
+[diff "spaceman-diff"]
+  command = /opt/homebrew/bin/spaceman-diff
+
+[init]
+	defaultBranch = main

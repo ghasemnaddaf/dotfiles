@@ -1,3 +1,4 @@
 git/gitconfig.local.symlink
 *.private
 *.private.symlink
+Brewfile.lock.json
