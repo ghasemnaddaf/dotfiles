@@ -1,0 +1,43 @@
+#!/bin/bash
+
+resym() {
+  local app=$1
+  local is_symlink=0
+  local cur_target=""
+  local new_target=$2
+  if [[ ! -f ${new_target} ]]; then
+    echo "error: ${new_target} does not exist"
+    return 1
+  fi
+  w=$(which $app)
+  if [[ "$w" == "" ]]; then
+    echo "$app does not exist"
+    d_target=$(dirname ${new_target})
+    d_app=$(dirname ${app})
+    if [[ "${d_app}"=""]]; then
+      app="${d_target}/app"
+      echo "appended target dir to app since $1 was not an absolute path: $app"
+  fi
+  else
+    if [[ -L $w ]]; then
+       is_symlink=1
+       cur_target=$(readlink -f $w)
+       if [[ "${cur_target}" = "${new_target}" ]]; then
+         echo "$w is already symlinked to ${new_target}, nothing to do"
+         exit 0
+       fi
+     fi
+  fi
+  if [[ "${is_symlink}" = "0" ]]; then
+    echo "error: $w is not a symlink, cannot resym"
+    return 1
+  fi
+
+  echo "resym: change from ${cur_target} to ${new_target}"
+  sudo rm -f $w
+  sudo ln -s ${new_target} $w
+  exit $?
+}
+
+# sudo rm -f /usr/local/bin/go && sudo ln -s /usr/local/go1.16.15/bin/go /usr/local/bin/go
+resym $@
