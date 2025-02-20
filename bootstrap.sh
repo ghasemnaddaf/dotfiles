@@ -86,8 +86,8 @@ pushd $HOME/.dotfiles
 popd
 
 # ohmyzsh
-/bin/bash -c "ZSH= REMOTE=git@github.com:ghasemnaddaf/ohmyzsh.git BRANCH=my_changes \
-    $(curl -fsSL https://raw.githubusercontent.com/ghasemnaddaf/ohmyzsh/my_changes/tools/install.sh)"
+/bin/bash -c "ZSH= REMOTE=git@github.com:ghasemnaddaf/ohmyzsh.git BRANCH=master \
+    $(curl -fsSL https://raw.githubusercontent.com/ghasemnaddaf/ohmyzsh/master/tools/install.sh)"
 
 # python
 PIP_INSTALL="yq"
