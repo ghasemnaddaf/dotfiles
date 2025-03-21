@@ -7,7 +7,7 @@ function git_clone() {
 }
 
 PKG_LIST_COMMON="awscli flake8 git golang packer teleport tree vim nmap wget zsh"
-PKG_LIST_MAC="jq go gnupg vim"
+PKG_LIST_MAC="jq go gnupg vim p7zip"
 PKG_LIST_CASK_MAC="google-chrome iterm2 slack flux sublime-text"
 PKG_LIST_LINUX="build-essential cmake curl dmidecode docker.io python3 python3-pip virtualbox"
 
