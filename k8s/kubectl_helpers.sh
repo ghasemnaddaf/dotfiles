@@ -38,13 +38,63 @@ alias ksctx='ksetctx'
 alias qem='k -n ddiaas-endpoint-manager'
 alias qemgepc='qem get epc'
 alias qepc='qemgepc'
+alias qepc1='qepc | awk "{print \$1}"'
 alias qeml='qem logs'
 alias qemx='qem exec -it'
+
+# Function to get endpointId by universalServiceId
+function qemepcusvc() {
+  if [ -z "$1" ]; then
+    echo "Error: universalServiceId argument is required"
+    echo "Usage: qemepcusvc <universalServiceId> [<fields>]"
+    return 1
+  fi
+
+  local usvcid="$1"
+  local fields="$2"
+  if [ -z "$fields" ]; then
+    fields="endpointId,cspAccountId"
+  fi
+  if [[ "$fields" == "full" ]]; then
+    qepc -o yaml | yq ".items[] | select(.spec.universalServiceId == \"$usvcid\")"
+  elif [[ "$fields" == "id" || "$fields" == "name" ]]; then
+    qepc -o yaml | yq ".items[] | select(.spec.universalServiceId == \"$usvcid\") | .spec.endpointId"
+  else
+    # eg endpointId,cspAccountId,ophId,availabilityZoneConfigs is transformed to .spec.endpointId,.spec.cspAccountId,.spec.ophId,.spec.availabilityZoneConfigs
+    fields=$(echo "$fields" | sed 's/\([^,]*\)/.spec.\1/g')
+    qepc -o yaml | yq ".items[] | select(.spec.universalServiceId == \"$usvcid\") | $fields"
+  fi
+}
+
+# Function to list all endpoints with their cspAccountId and universalServiceId
+function list_all_endpoints() {
+  # Get all EPCs and extract their names, cspAccountId and universalServiceId
+  local output=""
+
+  # Use yaml output for consistent parsing
+  local epcs=$(qepc -o yaml)
+
+  # Check if there are any EPCs
+  if [ -z "$epcs" ]; then
+    echo "No EPCs found"
+    return 1
+  fi
+
+  # Use yq to extract the relevant fields for each EPC
+  echo "ENDPOINT-ID                         UNIVERSAL-SERVICE-ID                CSP-ACCOUNT-ID"
+  echo "-----------------------------------------------------------------------------------------------------------------"
+  yq -r '.items[] | .spec.endpointId + "    " + .spec.universalServiceId + "    " + .spec.cspAccountId' - <<< "$epcs" | sort
+}
+
+alias qlep="list_all_endpoints"
+
+
 # dataplane
 alias qd='k -n ddiaas-dataplane'
 alias qdgds='qd get ds'
 alias qdx='qd exec -it'
 alias qdl='qd logs'
+
 # apps
 alias qdns='k -n ddiaas-dns-endpoint'
 alias qdnsx='qdns exec -it'
@@ -53,21 +103,6 @@ alias qdhcp='k -n ddiaas-dhcp-endpoint'
 alias qdhcpx='qdhcp exec -it'
 alias qdhcpl='qdhcp logs'
 
-# for the saas-app-deployment https://github.com/Infoblox-CTO/saas-app-deployment/tree/master/deployment/ngp-onprem#33--setup-environment-variables
-# export USER=$(git config user.email | sed -e 's/\@.*//')
-export REGISTRY_TAG=infobloxcto
-export VERSION_TAG=3.2.0 # Please use the latest version in https://hub.docker.com/r/infobloxcto/onprem.agent/
-export CSP_HOST=www-test.csp.infoblox.com # Change this with CSP that is being used by your team
-export S3_BUCKET=https://s3.amazonaws.com/ib-noa-test/gshirazi # Change this with the bucket/folder created for you
-export AWS_IAM_ROLE=ngp.k8.core
-export KUBERNETES_NAMESPACE=g # Namespace that you created in Section 2.1
-
-# helm
-# export AWS_ACCESS_KEY_ID=$(aws configure get aws_access_key_id)
-# export AWS_SECRET_ACCESS_KEY=$(aws configure get aws_secret_access_key)
-# export AWS_REGION=$(aws configure get region)
-# export AWS_SESSION_TOKEN=$(aws configure get aws_session_token)
-
 alias helm='docker run --rm -v $PWD:/app -e AWS_REGION=${AWS_REGION} -e AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID} -e AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY} -e AWS_SESSION_TOKEN=${AWS_SESSION_TOKEN} infoblox/helm:3'
 alias hl='helm list'
 alias hls='helm list'
@@ -75,3 +110,4 @@ alias hli='helm lint'
 alias hd='helm delete'
 alias hi='helm install'
 
+alias unsetaws='unset AWS_SESSION_TOKEN AWS_SECRET_ACCESS_KEY AWS_SESSION_TOKEN AWS_ACCESS_KEY_ID'
