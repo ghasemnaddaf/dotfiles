@@ -1,5 +1,6 @@
 [include]
         path = ~/.gitconfig.private
+#	path = ~/.gitconfig.private.pp
 [alias]
         co = checkout
         promote = !$ZSH/bin/git-promote
