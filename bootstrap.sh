@@ -74,7 +74,7 @@ if [ -z "${KEY_FOUND}" ]; then
     echo "error adding pubkey: $RET"
     echo "This can appen if your GITHUB_PAT is not assigned admin:public_key:write scope."
     echo "In this case, you would need to manually add the key and comment out above step."
-    exit 1
+#    exit 1
   fi
 fi
 
