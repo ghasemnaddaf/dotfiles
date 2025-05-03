@@ -33,7 +33,100 @@ alias kusectx='kubectl config use-context'
 alias ksetctx='kusectx'
 alias ksctx='ksetctx'
 
+alias helm='docker run --rm -v $PWD:/app -e AWS_REGION=${AWS_REGION} -e AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID} -e AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY} -e AWS_SESSION_TOKEN=${AWS_SESSION_TOKEN} infoblox/helm:3'
+alias hl='helm list'
+alias hls='helm list'
+alias hli='helm lint'
+alias hd='helm delete'
+alias hi='helm install'
+
+alias unsetaws='unset AWS_SESSION_TOKEN AWS_SECRET_ACCESS_KEY AWS_SESSION_TOKEN AWS_ACCESS_KEY_ID'
+
 # ddiaas aliases
+# dataplane
+alias qd='k -n ddiaas-dataplane'
+alias qdgds='qd get ds'
+alias qdx='qd exec -it'
+alias qdl='qd logs'
+
+# apps
+alias qdns='k -n ddiaas-dns-endpoint'
+alias qdnsx='qdns exec -it'
+alias qdnsl='qdns logs'
+alias qdhcp='k -n ddiaas-dhcp-endpoint'
+alias qdhcpx='qdhcp exec -it'
+alias qdhcpl='qdhcp logs'
+
+# mc: go install github.com/jonnylangefeld/kubectl-mc@latest
+alias mc='kubectl mc'
+alias mcls='mc -l'
+alias mcd='mc -r ddi-dev'
+alias mcq='mc -r ddi-qa'
+alias mcs='mc -r ddi-stg'
+alias mc0='mc -r ddi.\*prd'
+
+# mc em
+alias mcdem='mcd -n ddiaas-endpoint-manager'
+alias mcqem='mcq -n ddiaas-endpoint-manager'
+alias mcsem='mcs -n ddiaas-endpoint-manager'
+alias mc0em='mc0 -n ddiaas-endpoint-manager'
+alias mcdepc='mcdem get epc'
+alias mcqepc='mcqem get epc'
+alias mcsepc='mcsem get epc'
+alias mc0epc='mc0em get epc'
+
+# mc dns
+alias mcddns='mcd -n ddiaas-dns-endpoint'
+alias mcqdns='mcq -n ddiaas-dns-endpoint'
+alias mcsdns='mcs -n ddiaas-dns-endpoint'
+alias mc0dns='mc0 -n ddiaas-dns-endpoint'
+alias mcddnsgpo='mcddns get pod'
+alias mcqdnsgpo='mcqdns get pod'
+alias mcsdnsgpo='mcsdns get pod'
+alias mc0dnsgpo='mc0dns get pod'
+alias mcddnsgpow='mcddns get pod -w'
+alias mcqdnsgpow='mcqdns get pod -w'
+alias mcsdnsgpow='mcsdns get pod -w'
+alias mc0dnsgpow='mc0dns get pod -w'
+
+# mc dhcp
+alias mcddhcp='mcd -n ddiaas-dhcp-endpoint'
+alias mcqdhcp='mcq -n ddiaas-dhcp-endpoint'
+alias mcsdhcp='mcs -n ddiaas-dhcp-endpoint'
+alias mc0dhcp='mc0 -n ddiaas-dhcp-endpoint'
+alias mcddhcpgpo='mcddhcp get pod'
+alias mcqdhcpgpo='mcqdhcp get pod'
+alias mcsdhcpgpo='mcsdhcp get pod'
+alias mc0dhcpgpo='mc0dhcp get pod'
+alias mcddhcpgpow='mcddhcp get pod -w'
+alias mcqdhcpgpow='mcqdhcp get pod -w'
+alias mcsdhcpgpow='mcsdhcp get pod -w'
+alias mc0dhcpgpow='mc0dhcp get pod -w'
+
+# mc d
+alias mcdd='mcd -n ddiaas-dataplane'
+alias mcqd='mcq -n ddiaas-dataplane'
+alias mcsd='mcs -n ddiaas-dataplane'
+alias mc0d='mc0 -n ddiaas-dataplane'
+alias mcdgpo='mcdd get pod'
+alias mcqgpo='mcqd get pod'
+alias mcsgpo='mcsd get pod'
+alias mc0gpo='mc0d get pod'
+alias mcdgpow='mcdd get pod -w'
+alias mcqgpow='mcqd get pod -w'
+alias mcsgpow='mcsd get pod -w'
+alias mc0gpow='mc0d get pod -w'
+
+# mc ads
+alias mcdver='mcd -n atlas-app-def-system get version'
+alias mcqver='mcq -n atlas-app-def-system get version'
+alias mcsver='mcs -n atlas-app-def-system get version'
+alias mc0ver='mc0 -n atlas-app-def-system get version'
+alias mcdffo='mcd -n atlas-app-def-system get featureflagoverrides.terminus.infoblox.com'
+alias mcqffo='mcq -n atlas-app-def-system get featureflagoverrides.terminus.infoblox.com'
+alias mcsffo='mcs -n atlas-app-def-system get featureflagoverrides.terminus.infoblox.com'
+alias mc0ffo='mc0 -n atlas-app-def-system get featureflagoverrides.terminus.infoblox.com'
+
 # endpoint manager
 alias qem='k -n ddiaas-endpoint-manager'
 alias qemgepc='qem get epc'
@@ -88,26 +181,3 @@ function list_all_endpoints() {
 
 alias qlep="list_all_endpoints"
 
-
-# dataplane
-alias qd='k -n ddiaas-dataplane'
-alias qdgds='qd get ds'
-alias qdx='qd exec -it'
-alias qdl='qd logs'
-
-# apps
-alias qdns='k -n ddiaas-dns-endpoint'
-alias qdnsx='qdns exec -it'
-alias qdnsl='qdns logs'
-alias qdhcp='k -n ddiaas-dhcp-endpoint'
-alias qdhcpx='qdhcp exec -it'
-alias qdhcpl='qdhcp logs'
-
-alias helm='docker run --rm -v $PWD:/app -e AWS_REGION=${AWS_REGION} -e AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID} -e AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY} -e AWS_SESSION_TOKEN=${AWS_SESSION_TOKEN} infoblox/helm:3'
-alias hl='helm list'
-alias hls='helm list'
-alias hli='helm lint'
-alias hd='helm delete'
-alias hi='helm install'
-
-alias unsetaws='unset AWS_SESSION_TOKEN AWS_SECRET_ACCESS_KEY AWS_SESSION_TOKEN AWS_ACCESS_KEY_ID'

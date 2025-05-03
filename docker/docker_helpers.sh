@@ -14,3 +14,6 @@ function docker_cc () {
     docker_killc
     docker_rmc
 }
+
+alias dbbx='docker buildx build --platform linux/amd64,linux/arm64'
+
