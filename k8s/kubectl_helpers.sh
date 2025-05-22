@@ -174,9 +174,9 @@ function list_all_endpoints() {
   fi
 
   # Use yq to extract the relevant fields for each EPC
-  echo "ENDPOINT-ID                         UNIVERSAL-SERVICE-ID                CSP-ACCOUNT-ID"
+  echo "ENDPOINT-ID                         UNIVERSAL-SERVICE-ID                REALM       CSP-ACCOUNT-ID"
   echo "-----------------------------------------------------------------------------------------------------------------"
-  yq -r '.items[] | .spec.endpointId + "    " + .spec.universalServiceId + "    " + .spec.cspAccountId' - <<< "$epcs" | sort
+  yq -r '.items[] | .spec.endpointId + "    " + .spec.universalServiceId + "    " + .spec.realm + "     " + .spec.cspAccountId' - <<< "$epcs" | sort
 }
 
 alias qlep="list_all_endpoints"
