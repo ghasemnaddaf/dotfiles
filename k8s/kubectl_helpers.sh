@@ -42,6 +42,13 @@ alias hi='helm install'
 
 alias unsetaws='unset AWS_SESSION_TOKEN AWS_SECRET_ACCESS_KEY AWS_SESSION_TOKEN AWS_ACCESS_KEY_ID'
 
+# kafka ui
+kui () {
+	ns=poseidon-kafka-ui
+	pod=$(kubectl get pods -n $ns | tail -1 | awk '{print $1}')
+	kubectl port-forward -n $ns $pod 8080
+}
+
 # ddiaas aliases
 # dataplane
 alias qd='k -n ddiaas-dataplane'
