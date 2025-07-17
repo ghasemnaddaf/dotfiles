@@ -14,7 +14,7 @@ fi
 echo "Now add brew to PATH!"
 echo "# add brew to path" >> ~/.zprofile
 echo 'eval "$(/opt/homebrew/bin/brew shellenv)"' >> ~/.zprofile
-echo "# end brew path" >. ~/.zprofile
+echo "# end brew path" >> ~/.zprofile
 
 # also add for our session!
 eval "$(/opt/homebrew/bin/brew shellenv)"
