@@ -11,10 +11,11 @@ then
   /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 fi
 
+RCFILE=~/.zshrc
 echo "Now add brew to PATH!"
-echo "# add brew to path" >> ~/.zprofile
-echo 'eval "$(/opt/homebrew/bin/brew shellenv)"' >> ~/.zprofile
-echo "# end brew path" >> ~/.zprofile
+echo "# add brew to path" >> $RCFILE
+echo 'eval "$(/opt/homebrew/bin/brew shellenv)"' >> $RCFILE
+echo "# end brew path" >> $RCFILE
 
 # also add for our session!
 eval "$(/opt/homebrew/bin/brew shellenv)"
