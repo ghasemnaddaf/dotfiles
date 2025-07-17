@@ -11,7 +11,7 @@ then
   echo "Didn't find it! Installing Homebrew for you."
   if test "$(uname)" = "Darwin"
   then
-    ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/HEAD/install/master/install)"
+    ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/refs/heads/main/install.sh)"
   elif test "$(expr substr $(uname -s) 1 5)" = "Linux"
   then
     ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Linuxbrew/HEAD/install/master/install)"
