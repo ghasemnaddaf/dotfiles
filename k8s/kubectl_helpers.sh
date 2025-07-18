@@ -49,6 +49,21 @@ kui () {
 	kubectl port-forward -n $ns $pod 8080
 }
 
+# kc debug
+kdbg() {
+  local namespace="$1"
+  local pod_name="$2"
+  local debugger_name="$3"
+  local profile=${4:-general}
+  local image=${5:-busybox}
+  local container_name=${6}
+  local extras
+  if [ -n "$container_name" ]; then
+    extras="$extras -c $container_name"
+  fi
+  kubectl -n "$namespace" debug -it "$pod_name"  --copy-to "$debugger_name" --keep-init-containers false --profile "$profile" --image="$image" "$extras"
+}
+
 # ddiaas aliases
 # dataplane
 alias qd='k -n ddiaas-dataplane'
