@@ -33,7 +33,7 @@ alias kusectx='kubectl config use-context'
 alias ksetctx='kusectx'
 alias ksctx='ksetctx'
 
-alias helm='docker run --rm -v $PWD:/app -e AWS_REGION=${AWS_REGION} -e AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID} -e AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY} -e AWS_SESSION_TOKEN=${AWS_SESSION_TOKEN} infoblox/helm:3'
+alias h3='docker run --rm -v $PWD:/app -e AWS_REGION=${AWS_REGION} -e AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID} -e AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY} -e AWS_SESSION_TOKEN=${AWS_SESSION_TOKEN} infoblox/helm:3'
 alias hl='helm list'
 alias hls='helm list'
 alias hli='helm lint'
