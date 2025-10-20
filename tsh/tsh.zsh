@@ -11,7 +11,7 @@ func tplogin() {
 }
 
 alias tp1='tplogin env-1'
-alias tp2='tplogin env-2a'
+alias tp2='tplogin us-dev-2'
 alias tp4='tplogin env-4'
 alias tp5='tplogin env-5'
 alias tpp='tplogin prd-1'
@@ -37,9 +37,9 @@ alias tpdase='tpologin ddi-dev-ase1'
 alias tpdsgp='tplogin ddi-dev-sgp1'
 alias tpsuse='tplogin ddi-stg-use1'
 alias tp0mmb='tplogin ddi-prd-mmb1'
-alias tp0frk='tplogin ddi-prd-frk1'
-alias tp0nva='tplogin ddi-prd-nva1'
+alias tp0cac='tplogin ddi-prd-cac1'
 alias tp0spa='tplogin ddi-prd-spa1'
+alias tp0nva='tplogin ddi-prd-nva1'
 
 alias tpu='tsh kube --proxy=${TELEPORT_EU_PROXY}'
 alias tpuls='tpu ls'
