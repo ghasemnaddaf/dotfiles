@@ -139,6 +139,8 @@ alias mcqgpow='mcqd get pod -w'
 alias mcsgpow='mcsd get pod -w'
 alias mc0gpow='mc0d get pod -w'
 
+alias listpublicips='qd get pods -o custom-columns=NAME:.metadata.name,EIP:.metadata.labels.aws-pod-eip-controller-public-ip,FIXED_TAG:.metadata.labels.aws-pod-eip-controller-fixed-tag'
+
 # mc ads
 alias mcdver='mcd -n atlas-app-def-system get version'
 alias mcqver='mcq -n atlas-app-def-system get version'
