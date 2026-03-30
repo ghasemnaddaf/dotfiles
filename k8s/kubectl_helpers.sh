@@ -164,7 +164,7 @@ alias qemx='qem exec -it'
 
 # if these are not working: brew unlink python-yq && brew install yq
 # Function to get endpointId by universalServiceId
-function qemepcusvc() {
+qemepcusvc() {
   if [ -z "$1" ]; then
     echo "Error: universalServiceId argument is required"
     echo "Usage: qemepcusvc <universalServiceId> [<fields>]"
@@ -176,35 +176,36 @@ function qemepcusvc() {
   if [ -z "$fields" ]; then
     fields="endpointId,cspAccountId"
   fi
+
+  # Get all EPCs as JSON
+  local json_output
+  json_output=$(qepc -o json)
+
   if [[ "$fields" == "full" ]]; then
-    qepc -o yaml | yq ".items[] | select(.spec.universalServiceId == \"$usvcid\")"
-  elif [[ "$fields" == "id" || "$fields" == "name" ]]; then
-    qepc -o yaml | yq ".items[] | select(.spec.universalServiceId == \"$usvcid\") | .spec.endpointId"
-  else
-    # eg endpointId,cspAccountId,ophId,availabilityZoneConfigs is transformed to .spec.endpointId,.spec.cspAccountId,.spec.ophId,.spec.availabilityZoneConfigs
-    fields=$(echo "$fields" | sed 's/\([^,]*\)/.spec.\1/g')
-    qepc -o yaml | yq ".items[] | select(.spec.universalServiceId == \"$usvcid\") | $fields"
+    # Print the full JSON for matching EPC(s)
+    echo "$json_output" | kubectl neat 2>/dev/null | jq --arg usvcid "$usvcid" '.items[] | select(.spec.universalServiceId == $usvcid)'
+    return
   fi
+
+  # Split fields by comma
+  IFS=',' read -ra field_arr <<< "$fields"
+  # Build jsonpath string
+  local jsonpath='{range .items[*]}'
+  for f in "${field_arr[@]}"; do
+    jsonpath+="{.spec.$f}\t"
+  done
+  jsonpath+='{end}'
+
+  # Filter by universalServiceId and print selected fields
+  echo "$json_output" | jq --arg usvcid "$usvcid" '.items[] | select(.spec.universalServiceId == $usvcid)' | \
+    jq -r '[.spec.endpointId, .spec.cspAccountId, .spec.ophId, .spec.availabilityZoneConfigs] | @tsv' | \
+    column -t
 }
 
-# Function to list all endpoints with their cspAccountId and universalServiceId
-function list_all_endpoints() {
-  # Get all EPCs and extract their names, cspAccountId and universalServiceId
-  local output=""
-
-  # Use yaml output for consistent parsing
-  local epcs=$(qepc -o yaml)
-
-  # Check if there are any EPCs
-  if [ -z "$epcs" ]; then
-    echo "No EPCs found"
-    return 1
-  fi
-
-  # Use yq to extract the relevant fields for each EPC
-  echo "ENDPOINT-ID                         UNIVERSAL-SERVICE-ID                REALM       CSP-ACCOUNT-ID                OPHID"
-  echo "-----------------------------------------------------------------------------------------------------------------------------------------------------"
-  yq -r '.items[] | .spec.endpointId + "    " + .spec.universalServiceId + "    " + .spec.realm + "     " + .spec.cspAccountId' + "     " + .spec.ophId - <<< "$epcs" | sort
+list_all_endpoints() {
+  printf "ENDPOINT-ID\t\t\tUNIVERSAL-SERVICE-ID\t\t\tREALM\t\t\tCSP-ACCOUNT-ID\t\t\tOPHID\n"
+  printf "--------------------------------------------------------------------------------\n"
+  qepc -A -o jsonpath='{range .items[*]}{.spec.endpointId}{"\t"}{.spec.universalServiceId}{"\t"}{.spec.realm}{"\t"}{.spec.cspAccountId}{"\t"}{.spec.ophId}{"\n"}{end}'
 }
 
 alias qlep="list_all_endpoints"
