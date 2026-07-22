@@ -8,3 +8,5 @@ __pycache__
 *.pyc
 *.tar.*
 *.zip
+
+**/.claude/settings.local.json
