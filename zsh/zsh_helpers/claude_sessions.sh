@@ -1,10 +1,22 @@
 # Claude Code session lookup helpers.
-# Table: ~/.claude/sessions.tsv  (session_id TAB friendly_name TAB cwd TAB summary)
-# Populated automatically by the SessionEnd hook in ~/.claude/settings.json.
+# Table: ~/.claude/sessions.tsv
+#   Columns: session_id TAB friendly_name TAB cwd TAB summary TAB label
+# Populated automatically by the SessionEnd hook via ~/.claude/scripts/record-session.sh.
 
 _CLAUDE_SESSIONS="$HOME/.claude/sessions.tsv"
 
+# _cld_transcript_exists <session_id>
+# Returns 0 if the transcript file for this session still exists on disk.
+_cld_transcript_exists() {
+    local sid="$1"
+    local projects_dir="$HOME/.claude/projects"
+    [ -d "$projects_dir" ] || return 1
+    find "$projects_dir" -name "${sid}.jsonl" -o -name "${sid}.json" 2>/dev/null | grep -q .
+}
+
 # cld [pattern]  — list sessions, optionally filtered
+# Columns shown: #NR  label  friendly_name  summary
+# Dead sessions (transcript gone) are marked with ✗.
 cld() {
     local pattern="${1:-}"
     if [ ! -f "$_CLAUDE_SESSIONS" ]; then
@@ -21,18 +33,61 @@ cld() {
         echo "No sessions matching: $pattern"
         return 0
     fi
-    # Number rows globally (line number in the full file) so cldr <#> works
+
+    awk -F'\t' '{ print NR "\t" $0 }' "$_CLAUDE_SESSIONS" | grep -F "${pattern}" | \
     awk -F'\t' '{
-        # find global line number for this row
-        print NR "\t" $0
-    }' "$_CLAUDE_SESSIONS" | grep -F "${pattern}" | \
-    awk -F'\t' '{
-        printf "#%-4s  %-36s  %-44s  %s\n", $1, $2, $3, $5
+        nr      = $1
+        sid     = $2
+        fname   = $3
+        # TSV: session_id, friendly_name, cwd, summary, label
+        # After NR prepend: $4=cwd, $5=summary, $6=label
+        summary = (NF >= 5) ? $5 : ""
+        label   = (NF >= 6) ? $6 : ""
+        gsub(/^[[:space:]]+|[[:space:]]+$/, "", summary)
+        gsub(/^[[:space:]]+|[[:space:]]+$/, "", label)
+        if (summary == "") summary = "(no summary)"
+        if (length(summary) > 255) summary = substr(summary, 1, 252) "..."
+        ldisp = (label != "") ? label : "-"
+        printf "#%-4s  %-24s  %-36s  %-42s  %s\n", nr, ldisp, sid, fname, summary
     }'
 }
 
+# cldtag <#|session-id|pattern> <new-label>
+# Rename a session's label in the TSV (5th column).
+cldtag() {
+    local arg="${1:-}" newlabel="${2:-}"
+    if [ -z "$arg" ] || [ -z "$newlabel" ]; then
+        echo "Usage: cldtag <#|session-id|pattern> <new-label>"
+        return 1
+    fi
+    if [ ! -f "$_CLAUDE_SESSIONS" ]; then
+        echo "No sessions recorded yet."
+        return 1
+    fi
+
+    local sid
+    if [[ "$arg" =~ ^[0-9]+$ ]]; then
+        sid=$(sed -n "${arg}p" "$_CLAUDE_SESSIONS" | cut -f1)
+    else
+        sid=$(grep "$arg" "$_CLAUDE_SESSIONS" | tail -1 | cut -f1)
+    fi
+    if [ -z "$sid" ]; then
+        echo "No session found matching: $arg"
+        return 1
+    fi
+
+    # Replace or append the label (5th field) for this session_id
+    awk -F'\t' -v sid="$sid" -v label="$newlabel" 'BEGIN{OFS="\t"} {
+        if ($1 == sid) { $5 = label }
+        print
+    }' "$_CLAUDE_SESSIONS" > "${_CLAUDE_SESSIONS}.tmp" && mv "${_CLAUDE_SESSIONS}.tmp" "$_CLAUDE_SESSIONS"
+
+    echo "Session $sid renamed to: $newlabel"
+}
+
 # cldr <#|session-id|pattern>  — resume a session
-# Accepts: integer line # from cld output, full session UUID, or a text pattern
+# Accepts: integer line # from cld output, full session UUID, or a text pattern.
+# Warns if the transcript appears to be gone.
 cldr() {
     local arg="${1:-}"
     if [ -z "$arg" ]; then
@@ -45,10 +100,9 @@ cldr() {
         return 1
     fi
 
-    local match name
+    local match name origdir label
 
     if [[ "$arg" =~ ^[0-9]+$ ]]; then
-        # Integer → global line number
         local line
         line=$(sed -n "${arg}p" "$_CLAUDE_SESSIONS")
         if [ -z "$line" ]; then
@@ -57,13 +111,18 @@ cldr() {
         fi
         match=$(echo "$line" | cut -f1)
         name=$(echo "$line" | cut -f2)
+        origdir=$(echo "$line" | cut -f3)
+        label=$(echo "$line" | cut -f5)
     else
-        # Full UUID or text pattern — take the last (most recent) match
         local hit
         hit=$(grep "$arg" "$_CLAUDE_SESSIONS" | tail -1)
         match=$(echo "$hit" | cut -f1)
         name=$(echo "$hit" | cut -f2)
+        origdir=$(echo "$hit" | cut -f3)
+        label=$(echo "$hit" | cut -f5)
     fi
+
+    local display="${label:-$name}"
 
     if [ -z "$match" ]; then
         echo "No session found matching: $arg"
@@ -71,8 +130,25 @@ cldr() {
         return 1
     fi
 
-    echo "Resuming: $name ($match)"
-    claude --resume "$match"
+    # Check actual filesystem — the cached summary can be stale.
+    # Also prevents a failed resume from firing the SessionEnd hook and corrupting the TSV.
+    if ! _cld_transcript_exists "$match"; then
+        echo "⚠  Transcript file not found on disk for session: $display ($match)"
+        printf "   Continue anyway? [y/N] "
+        read -r ans
+        [[ "$ans" =~ ^[Yy] ]] || return 1
+    fi
+
+    echo "Resuming: $display ($match)"
+
+    # Claude stores transcripts keyed by the project cwd; resume must run from the
+    # same directory the session was created in, otherwise Claude can't find the file.
+    if [ -n "$origdir" ] && [ -d "$origdir" ]; then
+        (cd "$origdir" && claude --resume "$match")
+    else
+        claude --resume "$match"
+    fi
 }
 
+alias cldname=cldtag
 alias cldresume=cldr
