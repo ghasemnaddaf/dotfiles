@@ -85,6 +85,58 @@ cldtag() {
     echo "Session $sid renamed to: $newlabel"
 }
 
+# cldd <#|session-id> [#|session-id ...]  — delete one or more sessions
+# Removes rows from sessions.tsv and the transcript .jsonl from ~/.claude/projects/.
+cldd() {
+    if [ $# -eq 0 ]; then
+        echo "Usage: cldd <#|session-id> [#|session-id ...]"
+        return 1
+    fi
+    if [ ! -f "$_CLAUDE_SESSIONS" ]; then
+        echo "No sessions recorded yet."
+        return 1
+    fi
+
+    local sids_to_delete=()
+    local labels=()
+    for arg in "$@"; do
+        local sid label line
+        if [[ "$arg" =~ ^[0-9]+$ ]]; then
+            line=$(sed -n "${arg}p" "$_CLAUDE_SESSIONS")
+        else
+            line=$(grep "^${arg}" "$_CLAUDE_SESSIONS" | head -1)
+        fi
+        if [ -z "$line" ]; then
+            echo "No session found: $arg"
+            return 1
+        fi
+        sid=$(echo "$line" | cut -f1)
+        label=$(echo "$line" | cut -f5)
+        [ -z "$label" ] && label=$(echo "$line" | cut -f2)
+        sids_to_delete+=("$sid")
+        labels+=("$label")
+    done
+
+    # Confirm
+    echo "Will delete ${#sids_to_delete[@]} session(s):"
+    for i in "${!sids_to_delete[@]}"; do
+        echo "  ${sids_to_delete[$i]}  ${labels[$i]}"
+    done
+    printf "Confirm? [y/N] "
+    read -r ans
+    [[ "$ans" =~ ^[Yy] ]] || return 1
+
+    local projects_dir="$HOME/.claude/projects"
+    for sid in "${sids_to_delete[@]}"; do
+        # Remove transcript files
+        find "$projects_dir" -name "${sid}.jsonl" -o -name "${sid}.json" 2>/dev/null | xargs rm -f 2>/dev/null || true
+        # Remove TSV row
+        grep -v "^${sid}	" "$_CLAUDE_SESSIONS" > "${_CLAUDE_SESSIONS}.tmp" && mv "${_CLAUDE_SESSIONS}.tmp" "$_CLAUDE_SESSIONS"
+    done
+
+    echo "Deleted ${#sids_to_delete[@]} session(s)."
+}
+
 # cldr <#|session-id|pattern>  — resume a session
 # Accepts: integer line # from cld output, full session UUID, or a text pattern.
 # Warns if the transcript appears to be gone.

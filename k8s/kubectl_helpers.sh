@@ -67,15 +67,18 @@ kdbg() {
 # ddiaas aliases
 # dataplane
 alias qd='k -n ddiaas-dataplane'
+alias qdgpo='k -n ddiaas-dataplane get pod'
 alias qdgds='qd get ds'
 alias qdx='qd exec -it'
 alias qdl='qd logs'
 
 # apps
 alias qdns='k -n ddiaas-dns-endpoint'
+alias qdnsgpo='k -n ddiaas-dns-endpoint get pod'
 alias qdnsx='qdns exec -it'
 alias qdnsl='qdns logs'
 alias qdhcp='k -n ddiaas-dhcp-endpoint'
+alias qdhcpgpo='k -n ddiaas-dhcp-endpoint get pod'
 alias qdhcpx='qdhcp exec -it'
 alias qdhcpl='qdhcp logs'
 
